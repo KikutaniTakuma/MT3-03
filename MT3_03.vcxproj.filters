@@ -35,6 +35,9 @@
     <Filter Include="Bezier">
       <UniqueIdentifier>{c42d95d7-41e5-49e9-ad19-f98f754cdfe9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Bone">
+      <UniqueIdentifier>{bb928177-12ea-429c-bde8-e71131877a56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="Bezier\Bezier.cpp">
       <Filter>Bezier</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone\Bone.cpp">
+      <Filter>Bone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="Bezier\Bezier.h">
       <Filter>Bezier</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone\Bone.h">
+      <Filter>Bone</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

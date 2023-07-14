@@ -13,6 +13,7 @@
 #include "Mouse/Mouse.h"
 #include "Model/MyModel.h"
 #include "Bezier/Bezier.h"
+#include "Bone/Bone.h"
 
 const std::string kWindowTitle{ "LE2A_04_キクタニ_タクマ_タイトル" };
 
@@ -37,10 +38,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	int gridDivision = 10;
 
-	auto bezier = std::make_unique<Bezier>();
-	bezier->start = {-0.8f, 0.58f,1.0f};
-	bezier->pibot = {1.76f,1.0f,-0.3f};
-	bezier->end = {0.94f,-0.7f,2.3f};
+	auto shoulder = std::make_unique<Bone>();
+	shoulder->translation = { 0.2f,1.0f,0.0f };
+	shoulder->rotate = { 0.0f,0.0f,-6.8f };
+	auto elbow = std::make_unique<Bone>();
+	elbow->translation = { 0.4f,0.0f,0.0f };
+	elbow->rotate = { 0.0f,0.0f,-1.4f };
+	elbow->Setparent(shoulder.get());
+	auto hand = std::make_unique<Bone>();
+	hand->translation = { 0.3f,1.0f,0.0f };
+	hand->rotate = { 0.0f,0.0f,0.0f };
+	hand->Setparent(elbow.get());
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -63,14 +72,25 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
 		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
 		ImGui::DragFloat3("Camera moveRotate", &camera->moveRotate.x, 0.01f);
-		ImGui::DragFloat3("Bezier start", &bezier->start.x, 0.01f);
-		ImGui::DragFloat3("Bezier pibot", &bezier->pibot.x, 0.01f);
-		ImGui::DragFloat3("Bezier end", &bezier->end.x, 0.01f);
+		ImGui::End();
+
+		ImGui::Begin("Bone");
+		ImGui::DragFloat3("Shoulder translation", &shoulder->translation.x, 0.01f);
+		ImGui::DragFloat3("Shoulder rotate", &shoulder->rotate.x, 0.01f);
+		ImGui::DragFloat3("Shoulder scale", &shoulder->scale.x, 0.01f);
+		ImGui::DragFloat3("Elbow translation", &elbow->translation.x, 0.01f);
+		ImGui::DragFloat3("Elbowrotate", & elbow->rotate.x, 0.01f);
+		ImGui::DragFloat3("Elbowscale", &elbow->scale.x, 0.01f);
+		ImGui::DragFloat3("Hand translation", &hand->translation.x, 0.01f);
+		ImGui::DragFloat3("Handrotate", & hand->rotate.x, 0.01f);
+		ImGui::DragFloat3("Handscale", &hand->scale.x, 0.01f);
 		ImGui::End();
 
 		grid->Update(gridDivision);
 
-		bezier->Update();
+		shoulder->Update();
+		elbow->Update();
+		hand->Update();
 
 		///
 		/// ↑更新処理ここまで
@@ -83,7 +103,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
 
-		bezier->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xffffffff);
+		shoulder->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), RED);
+		elbow->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(),GREEN);
+		hand->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), BLUE);
+		
 		///
 		/// ↑描画処理ここまで
 		///
