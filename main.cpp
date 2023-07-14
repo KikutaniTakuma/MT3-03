@@ -26,30 +26,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::array<char, 256> keys = { 0 };
 	std::array<char, 256> preKeys = { 0 };
 
-	auto camera = std::make_unique<Camera>();
-	assert(camera);
-
-	camera->pos = { 0.0f,1.9f, -6.49f };
-	camera->rotate = { 0.26f,0.0f,0.0f };
-	camera->scale = { 1.0f,1.0f,1.0f };
-
-	auto grid = std::make_unique<Grid>();
-	grid->scalar = { 4.0f,0.0f,4.0f };
-
-	int gridDivision = 10;
-
-	auto shoulder = std::make_unique<Bone>();
-	shoulder->translation = { 0.2f,1.0f,0.0f };
-	shoulder->rotate = { 0.0f,0.0f,-6.8f };
-	auto elbow = std::make_unique<Bone>();
-	elbow->translation = { 0.4f,0.0f,0.0f };
-	elbow->rotate = { 0.0f,0.0f,-1.4f };
-	elbow->Setparent(shoulder.get());
-	auto hand = std::make_unique<Bone>();
-	hand->translation = { 0.3f,1.0f,0.0f };
-	hand->rotate = { 0.0f,0.0f,0.0f };
-	hand->Setparent(elbow.get());
-
+	Vector3 a{ 0.2f,1.0f,0.0f };
+	Vector3 b{ 2.4f,3.1f,1.2f };
+	Vector3 c = a + b;
+	Vector3 d = a - b;
+	Vector3 e = a * 2.4f;
+	Vector3 rotate{ 0.4f,1.43f,-0.8f };
+	Mat4x4 rotateXMat = HoriMakeMatrixRotateX(rotate.x);
+	Mat4x4 rotateYMat = HoriMakeMatrixRotateY(rotate.y);
+	Mat4x4 rotateZMat = HoriMakeMatrixRotateZ(rotate.z);
+	auto rotateMat = rotateXMat * rotateYMat * rotateZMat;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -68,29 +54,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("Camera pos", &camera->pos.x, 0.01f);
-		ImGui::DragFloat3("Camera rotate", &camera->rotate.x, 0.01f);
-		ImGui::DragFloat3("Camera scale", &camera->scale.x, 0.01f);
-		ImGui::DragFloat3("Camera moveRotate", &camera->moveRotate.x, 0.01f);
+		ImGui::Text("c:%f, %f, %f", c.x, c.y, c.z);
+		ImGui::Text("d:%f, %f, %f", d.x, d.y, d.z);
+		ImGui::Text("e:%f, %f, %f", e.x, e.y, e.z);
+
+		ImGui::Text(
+			"matrix:\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+			rotateMat[0][0], rotateMat[0][1], rotateMat[0][2], rotateMat[0][3],
+			rotateMat[1][0], rotateMat[1][1], rotateMat[1][2], rotateMat[1][3],
+			rotateMat[2][0], rotateMat[2][1], rotateMat[2][2], rotateMat[2][3],
+			rotateMat[3][0], rotateMat[3][1], rotateMat[3][2], rotateMat[3][3]
+		);
 		ImGui::End();
-
-		ImGui::Begin("Bone");
-		ImGui::DragFloat3("Shoulder translation", &shoulder->translation.x, 0.01f);
-		ImGui::DragFloat3("Shoulder rotate", &shoulder->rotate.x, 0.01f);
-		ImGui::DragFloat3("Shoulder scale", &shoulder->scale.x, 0.01f);
-		ImGui::DragFloat3("Elbow translation", &elbow->translation.x, 0.01f);
-		ImGui::DragFloat3("Elbowrotate", & elbow->rotate.x, 0.01f);
-		ImGui::DragFloat3("Elbowscale", &elbow->scale.x, 0.01f);
-		ImGui::DragFloat3("Hand translation", &hand->translation.x, 0.01f);
-		ImGui::DragFloat3("Handrotate", & hand->rotate.x, 0.01f);
-		ImGui::DragFloat3("Handscale", &hand->scale.x, 0.01f);
-		ImGui::End();
-
-		grid->Update(gridDivision);
-
-		shoulder->Update();
-		elbow->Update();
-		hand->Update();
 
 		///
 		/// ↑更新処理ここまで
@@ -99,13 +74,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 		/// ↓描画処理ここから
 		///
-		camera->Update();
-
-		grid->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), 0xaaaaaaff);
-
-		shoulder->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), RED);
-		elbow->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(),GREEN);
-		hand->Draw(camera->getViewProjectionMatrix(), camera->getViewPortMatrix(), BLUE);
 		
 		///
 		/// ↑描画処理ここまで
